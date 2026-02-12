@@ -46,3 +46,5 @@ astrbot dashboard → 服务管理 → 添加/启用一个文本模型（如 Ope
 重启 AstrBot，日志应出现：
 
 花粉AI图片生成插件已加载。
+
+之后，在插件配置填写你的Pollinations api key、或者选择支持的llm生图提供商、你的SD url等。
