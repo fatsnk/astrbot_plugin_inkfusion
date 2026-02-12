@@ -21,7 +21,7 @@ import astrbot.api.message_components as Comp
     "0.1.0",
     "https://github.com/fatsnk/astrbot_plugin_inkfusion"
 )
-class PollinationsGeneratorPlugin(Star):
+class InkfusionPlugin(Star):
     """
     通过 Pollinations AI 服务生成图片的插件。
     支持多 API Key 随机选用、多模型管理、可选 LLM 提示词优化。
