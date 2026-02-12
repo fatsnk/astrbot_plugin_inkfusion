@@ -1,0 +1,5 @@
+name: astrbot_plugin_inkfusion
+author: F5
+description: 使用 Pollinations AI生成图片，支持多API Key、模型切换、LLM提示词优化；可以接入多模态llm提供商,解析llm api返回的图片链接。也可以接stable diffusion（A1111）。
+version: 0.1.0
+repo: https://github.com/fatsnk/astrbot_plugin_inkfusion

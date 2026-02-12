@@ -1,0 +1,178 @@
+{
+  "api_keys": {
+    "description": "Pollinations API Keys",
+    "type": "list",
+    "default": [],
+    "hint": "填写一个或多个 Pollinations API Key，生成图片时随机选用"
+  },
+  "models": {
+    "description": "图片生成模型列表",
+    "type": "list",
+    "default": ["flux"],
+    "hint": "模型名称列表，第一个为默认模型。可通过指令 /ai生图 模型列表 在线获取"
+  },
+  "width": {
+    "description": "图片宽度(px)",
+    "type": "int",
+    "default": 1024,
+    "hint": "生成图片的宽度，单位像素"
+  },
+  "height": {
+    "description": "图片高度(px)",
+    "type": "int",
+    "default": 1024,
+    "hint": "生成图片的高度，单位像素"
+  },
+  "seed": {
+    "description": "随机种子",
+    "type": "int",
+    "default": -1,
+    "hint": "随机种子，用于复现结果。-1 为随机"
+  },
+  "enhance": {
+    "description": "AI增强提示词(服务端)",
+    "type": "bool",
+    "default": false,
+    "hint": "让 Pollinations 服务端 AI 自动优化提示词（与本地LLM优化独立）"
+  },
+  "negative_prompt": {
+    "description": "负面提示词",
+    "type": "string",
+    "default": "worst quality, blurry",
+    "hint": "描述希望在生成图片中避免的内容"
+  },
+  "safe": {
+    "description": "安全内容过滤",
+    "type": "bool",
+    "default": false,
+    "hint": "启用安全内容过滤器"
+  },
+  "quality": {
+    "description": "图片质量(仅gptimage模型)",
+    "type": "string",
+    "default": "medium",
+    "hint": "图片质量等级，可选: low / medium / high / hd（仅 gptimage 模型生效）"
+  },
+  "enable_prompt_optimization": {
+    "description": "启用LLM提示词优化",
+    "type": "bool",
+    "default": true,
+    "hint": "启用后使用LLM将用户输入优化为英文图片提示词，关闭则直接使用原始输入"
+  },
+  "prompt_provider_name": {
+    "description": "提示词优化LLM提供商",
+    "type": "string",
+    "default": "",
+    "hint": "用于优化提示词的LLM提供商，留空则使用默认模型",
+    "_special": "select_provider"
+  },
+  "optimization_system_prompt": {
+    "description": "提示词优化系统提示",
+    "type": "string",
+    "default": "You are an expert in crafting prompts for AI image generation models. Your task is to take a user's simple idea and transform it into a rich, detailed, and artistic prompt in English. The final output should be a single, continuous string of keywords and descriptions, separated by commas. Do not add any other explanatory text, just the prompt itself. Focus on visual details, art style (e.g., photorealistic, watercolor, anime), composition, and lighting.",
+    "hint": "LLM优化提示词时使用的系统提示，可自定义调整生成风格"
+  },
+  "llm_image_provider_name": {
+    "description": "LLM直接生图提供商",
+    "type": "string",
+    "default": "",
+    "hint": "选择支持图片/视频生成的LLM提供商（如Grok、GPT-4o等），用于 /ai生图 llm 指令",
+    "_special": "select_provider"
+  },
+  "llm_image_system_prompt": {
+    "description": "LLM生图系统提示",
+    "type": "string",
+    "default": "你是一个图片生成助手。请根据用户的描述生成图片。直接生成图片，不要添加多余的解释文字。",
+    "hint": "使用LLM直接生图时的系统提示词"
+  },
+  "sd_enabled": {
+    "description": "启用 Stable Diffusion (A1111) 生图",
+    "type": "bool",
+    "default": false,
+    "hint": "启用后可通过 /sd生图 指令使用 Automatic1111 WebUI API 生成图片"
+  },
+  "sd_skip_ssl_verify": {
+    "description": "SD 跳过 SSL 证书验证",
+    "type": "bool",
+    "default": false,
+    "hint": "通过内网穿透等方式远程访问 HTTPS 地址时，如遇 SSL 证书错误可开启此选项"
+  },
+  "sd_base_url": {
+    "description": "SD WebUI API 地址",
+    "type": "string",
+    "default": "http://127.0.0.1:7860",
+    "hint": "Automatic1111 WebUI 的 API 地址，例如 http://127.0.0.1:7860"
+  },
+  "sd_width": {
+    "description": "SD 图片宽度(px)",
+    "type": "int",
+    "default": 512,
+    "hint": "Stable Diffusion 生成图片的宽度"
+  },
+  "sd_height": {
+    "description": "SD 图片高度(px)",
+    "type": "int",
+    "default": 512,
+    "hint": "Stable Diffusion 生成图片的高度"
+  },
+  "sd_positive_prompt": {
+    "description": "SD 正面提示词模板",
+    "type": "text",
+    "default": "masterpiece, best quality, {{positive}}",
+    "hint": "正面提示词模板，使用 {{positive}} 作为用户输入的占位符。例如: masterpiece, best quality, {{positive}}, detailed"
+  },
+  "sd_negative_prompt": {
+    "description": "SD 负面提示词",
+    "type": "text",
+    "default": "bad quality, worst quality, low quality, blurry, bad anatomy, bad hands, extra digits",
+    "hint": "负面提示词，直接使用此处填写的内容，不解析用户消息"
+  },
+  "sd_steps": {
+    "description": "SD 采样步数",
+    "type": "int",
+    "default": 20,
+    "hint": "采样步数，越高质量越好但越慢，推荐 20-30"
+  },
+  "sd_cfg_scale": {
+    "description": "SD CFG Scale",
+    "type": "float",
+    "default": 7.0,
+    "hint": "提示词引导系数，越高越贴合提示词，推荐 5-12"
+  },
+  "sd_sampler_name": {
+    "description": "SD 采样器",
+    "type": "string",
+    "default": "Euler a",
+    "hint": "采样器名称，如 Euler a, DPM++ 2M Karras, DDIM 等。可通过 /sd生图 采样器列表 查看"
+  },
+  "sd_scheduler": {
+    "description": "SD 调度器(可选)",
+    "type": "string",
+    "default": "",
+    "hint": "调度器名称，留空使用默认。可通过 /sd生图 采样器列表 查看"
+  },
+  "sd_seed": {
+    "description": "SD 随机种子",
+    "type": "int",
+    "default": -1,
+    "hint": "随机种子，-1 为随机"
+  },
+  "sd_restore_faces": {
+    "description": "SD 面部修复",
+    "type": "bool",
+    "default": false,
+    "hint": "启用面部修复（适合人像生成）"
+  },
+  "sd_model_checkpoint": {
+    "description": "SD 模型(可选)",
+    "type": "string",
+    "default": "",
+    "hint": "指定使用的模型 checkpoint 名称，留空使用 WebUI 当前加载的模型。可通过 /sd生图 模型列表 查看"
+  },
+  "sd_clip_skip": {
+    "description": "SD CLIP Skip(可选)",
+    "type": "int",
+    "default": 0,
+    "hint": "CLIP Skip 层数，0 表示不设置（使用 WebUI 默认值），常用值为 1 或 2"
+  }
+}
