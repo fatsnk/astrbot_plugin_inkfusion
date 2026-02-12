@@ -1,50 +1,98 @@
 # astrbot_plugin_inkfusion
-用于Astrbot的Pollinations、SD（A1111）、llm图片生成插件。
-参考项目：https://github.com/qa296/astrbot_plugin_pollinations_images
-；感谢这位大佬的工作。由于现在Pollinations的api已经更新，所以调整了功能，并添加更多生图方式，例如stable diffusion。
 
-提醒：pollinations.ai接口已经更新。如果你使用pollinations进行文生图，请前往新的[管理页面](https://enter.pollinations.ai/)`https://enter.pollinations.ai/`创建新的api key。
+> 用于 AstrBot 的 Pollinations、SD（A1111）、LLM 图片生成插件
 
-1. 功能简介
-Pollinations指令：
+## 📌 项目说明
 
-查看Pollinations可用的图片生成模型列表:
+本插件为 AstrBot 提供多种 AI 图片生成方式，支持 Pollinations、Stable Diffusion 和 LLM 生图。
 
-/ai生图 模型列表
+**参考项目：** [astrbot_plugin_pollinations_images](https://github.com/qa296/astrbot_plugin_pollinations_images)  
+感谢原作者的工作！由于 Pollinations API 已更新，本插件进行了功能调整并添加了更多生图方式。
 
-切换默认Pollinations图片生成模型：
+### ⚠️ 重要提醒
 
-/ai生图 模型 模型名称
+Pollinations.ai 接口已更新。如果使用 Pollinations 进行文生图，请前往新的 [管理页面](https://enter.pollinations.ai/) 创建新的 API Key。
 
-调用Pollinations的API生成图片：
+---
 
-/ai生图 生成 这里是提示词，例如画一只小猫
+## 🎨 功能简介
 
-或者直接使用快捷指令`/画 XXX`
+### Pollinations 指令
 
-llm指令（只支持在回复文本中返回图片链接的api，例如markdown和html格式）：
+- **查看可用模型列表**
+  ```
+  /ai生图 模型列表
+  ```
 
-使用llm直接生成图片/视频：
+- **切换默认生成模型**
+  ```
+  /ai生图 模型 模型名称
+  ```
 
-/ai生图 llm XXX...
+- **生成图片**
+  ```
+  /ai生图 生成 这里是提示词，例如画一只小猫
+  ```
+  或使用快捷指令：
+  ```
+  /画 XXX
+  ```
 
-stable diffusion指令：
+### LLM 指令
 
-/sd生图 生成 XXX...
+> 仅支持在回复文本中返回图片链接的 API（如 Markdown 和 HTML 格式）
 
-或者使用快捷指令`/sd画 XXX`
+- **使用 LLM 生成图片/视频**
+  ```
+  /ai生图 llm XXX...
+  ```
 
-- 更多指令请在Astrbot中的管理行为菜单查看。
+### Stable Diffusion 指令
 
-2. 安装与启用
-将插件文件夹放至 data/plugins。
+- **SD 生成图片**
+  ```
+  /sd生图 生成 XXX...
+  ```
+  或使用快捷指令：
+  ```
+  /sd画 XXX
+  ```
+
+💡 **更多指令**请在 AstrBot webUI界面的「管理行为」菜单中查看。
+
+---
+
+## 📦 安装与启用
+
+### 1. 安装插件
+
+将插件文件夹放置到 `data/plugins` 目录下。
+
+### 2. 启用 LLM 服务
 
 确保 AstrBot 已启用「LLM 服务」：
 
-astrbot dashboard → 服务管理 → 添加/启用一个文本模型（如 OpenAI、Ollama 等）。
+1. 进入 `astrbot dashboard`
+2. 导航到 **服务管理**
+3. 添加/启用一个文本模型（如 OpenAI、Ollama 等）
 
-重启 AstrBot，日志应出现：
+### 3. 重启 AstrBot
 
+重启后，日志中应显示：
+
+```
 花粉AI图片生成插件已加载。
+```
 
-之后，在插件配置填写你的Pollinations api key、或者选择支持的llm生图提供商、你的SD url等。
+### 4. 配置插件
+
+在插件配置中填写：
+- Pollinations API Key
+- 选择支持的 LLM 生图提供商
+- 你的 SD URL 等配置信息
+
+---
+
+## 📝 许可与致谢
+
+本项目基于原 [astrbot_plugin_pollinations_images](https://github.com/qa296/astrbot_plugin_pollinations_images) 项目开发，特此致谢！
