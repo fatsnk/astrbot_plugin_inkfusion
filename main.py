@@ -3,6 +3,7 @@ import re
 import ssl
 import uuid
 import random
+import json
 import asyncio
 import tempfile
 import base64
@@ -398,6 +399,94 @@ class InkfusionPlugin(Star):
 
         return result
 
+    async def _generate_via_qwen_image(self, prompt_text: str) -> str:
+        """通过千问图像生成 API 直接生图，下载到本地并返回文件路径。"""
+        provider = self.context.get_provider_by_id(self.llm_image_provider_name)
+        if not provider:
+            raise Exception(f"未找到 LLM 提供商: {self.llm_image_provider_name}")
+
+        # 从 provider ID 解析 source_id（格式: "Qwen/qwen-image-2.0" → "Qwen"）
+        pid = getattr(provider, 'id', '') or self.llm_image_provider_name
+        source_id = pid.split('/')[0] if '/' in pid else pid
+
+        # 读取 AstrBot 主配置获取 provider source 的 key 和 api_base
+        data_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        config_path = os.path.join(data_dir, '..', 'cmd_config.json')
+        config_path = os.path.normpath(config_path)
+        with open(config_path, 'r', encoding='utf-8-sig') as f:
+            main_config = json.load(f)
+
+        src_config = None
+        for src in main_config.get('provider_sources', []):
+            if src.get('id') == source_id:
+                src_config = src
+                break
+
+        if not src_config:
+            raise Exception(f"未在配置中找到 provider source: {source_id}")
+
+        keys = src_config.get("key", [])
+        if not keys or not keys[0]:
+            raise Exception(f"Provider source '{source_id}' 未配置 API Key")
+
+        api_key = keys[0]
+        api_base = src_config.get("api_base", "https://dashscope.aliyuncs.com")
+
+        # 从 api_base 提取域名，拼接多模态生图端点
+        parsed = urllib.parse.urlparse(api_base)
+        base_domain = f"{parsed.scheme}://{parsed.netloc}"
+        endpoint = f"{base_domain}/api/v1/services/aigc/multimodal-generation/generation"
+
+        payload = {
+            "model": "qwen-image-2.0-pro",
+            "input": {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [{"text": prompt_text}]
+                    }
+                ]
+            },
+            "parameters": {
+                "n": 1,
+                "negative_prompt": " ",
+                "prompt_extend": True,
+                "watermark": False,
+                "size": f"{self.width}*{self.height}"
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+
+        logger.info(f"千问生图请求: endpoint={endpoint} source={source_id} size={self.width}x{self.height}")
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(endpoint, json=payload, headers=headers,
+                                     timeout=aiohttp.ClientTimeout(total=self.request_timeout)) as resp:
+                if resp.status != 200:
+                    error_text = await resp.text()
+                    raise Exception(f"千问图像生成失败: HTTP {resp.status} - {error_text[:300]}")
+                result_json = await resp.json()
+
+        image_url = result_json["output"]["choices"][0]["message"]["content"][0]["image"]
+        logger.info(f"千问返回图片URL: {image_url[:80]}...")
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(image_url, timeout=aiohttp.ClientTimeout(total=self.request_timeout)) as resp:
+                if resp.status != 200:
+                    raise Exception(f"下载千问图片失败: HTTP {resp.status}")
+                image_data = await resp.read()
+
+        filename = f"{uuid.uuid4().hex}.png"
+        filepath = os.path.join(self.temp_dir, filename)
+        with open(filepath, "wb") as f:
+            f.write(image_data)
+
+        logger.info(f"千问图片已保存: {filepath} ({len(image_data)} bytes)")
+        return filepath
+
     def _get_sd_connector(self) -> aiohttp.TCPConnector:
         """获取 SD 请求用的 TCP 连接器，根据配置决定是否跳过 SSL 验证"""
         if self.sd_skip_ssl_verify:
@@ -520,6 +609,10 @@ class InkfusionPlugin(Star):
             theme(string): 图片的详细描述
         """
         try:
+            # 如果配置了 LLM 生图提供商，优先走千问图像生成 API
+            if self.llm_image_provider_name:
+                return await self._generate_via_qwen_image(theme)
+            # 否则走 Pollinations API 通道
             return await self._generate_image(theme)
         except Exception as e:
             logger.error(f"图片生成过程中发生错误: {e}")
@@ -731,7 +824,7 @@ class InkfusionPlugin(Star):
                     samplers = await resp.json()
 
             lines = [f"📋 SD 可用采样器 (共{len(samplers)}个):\n"]
-            for s in samplers:
+            forin samplers:
                 name = s.get("name", "unknown")
                 marker = " 👈 当前" if name == self.sd_sampler_name else ""
                 lines.append(f"  • {name}{marker}")
